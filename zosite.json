@@ -1,0 +1,15 @@
+{
+  "name": "web-and-mobile-application-site",
+  "local_port": 54736,
+  "entrypoint": "bun run dev",
+  "publish": {
+    "label": "web-and-mobile-application-site",
+    "type": "http",
+    "entrypoint": "bun run prod",
+    "published_port": 54645,
+    "env": {
+      "NODE_ENV": "production",
+      "ZO_CLIENT_IDENTITY_TOKEN": "none"
+    }
+  }
+}
