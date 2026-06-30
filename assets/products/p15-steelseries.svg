@@ -1,0 +1,14 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="g15" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a2a2a"/><stop offset="100%" stop-color="#0a0a0a"/></linearGradient>
+<radialGradient id="g15m" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#3a3a3a"/><stop offset="100%" stop-color="#111"/></radialGradient>
+</defs>
+<path d="M48 96 Q48 38 100 38 Q152 38 152 96" fill="none" stroke="url(#g15)" stroke-width="9" stroke-linecap="round"/>
+<rect x="40" y="90" width="24" height="52" rx="12" fill="url(#g15m)" stroke="#000" stroke-width="1"/>
+<rect x="136" y="90" width="24" height="52" rx="12" fill="url(#g15m)" stroke="#000" stroke-width="1"/>
+<circle cx="52" cy="116" r="9" fill="none" stroke="#fb4f67" stroke-width="1" opacity="0.5"/>
+<circle cx="148" cy="116" r="9" fill="none" stroke="#fb4f67" stroke-width="1" opacity="0.5"/>
+<path d="M148 142 Q156 152 150 162" fill="none" stroke="#222" stroke-width="3" stroke-linecap="round"/>
+<circle cx="150" cy="163" r="3" fill="#1a1a1a"/>
+<circle cx="52" cy="100" r="2.5" fill="#fb4f67" opacity="0.85"/>
+</svg>

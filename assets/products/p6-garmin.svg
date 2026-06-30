@@ -1,0 +1,15 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="g6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22223a"/><stop offset="100%" stop-color="#0a0a14"/></linearGradient>
+</defs>
+<rect x="80" y="22" width="40" height="38" rx="6" fill="#1a1a1a"/>
+<rect x="80" y="140" width="40" height="38" rx="6" fill="#1a1a1a"/>
+<rect x="62" y="58" width="76" height="84" rx="16" fill="url(#g6)" stroke="#3a3a52" stroke-width="1.5"/>
+<rect x="70" y="66" width="60" height="68" rx="9" fill="#050508"/>
+<text x="100" y="92" font-family="monospace" font-size="13" fill="#e8f542" text-anchor="middle" font-weight="700">8:42</text>
+<text x="100" y="106" font-family="monospace" font-size="7" fill="#74c69d" text-anchor="middle">142 BPM</text>
+<path d="M76 116 L84 116 L88 108 L92 124 L96 112 L100 116 L124 116" fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="142" cy="78" r="3" fill="#5a5a72"/>
+<circle cx="142" cy="100" r="3" fill="#5a5a72"/>
+<circle cx="142" cy="122" r="3" fill="#5a5a72"/>
+</svg>

@@ -1,14 +1,1062 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Zo Site</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaStore — Intelligent Commerce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
+<!-- ── AMBIENT ── -->
+<div class="ambient"><div class="ab ab1"></div><div class="ab ab2"></div><div class="ab ab3"></div></div>
+
+<!-- ════════════════════════════════════════ NAV -->
+<div class="nav-loading-bar" id="nav-loading-bar"></div>
+
+<nav id="top-nav">
+  <div class="nav-logo" onclick="App.go('store')">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    </div>
+    Nova<span class="ns">Store</span>
+  </div>
+
+  <div class="nav-tabs">
+    <div class="nav-tab active" id="tab-store"    onclick="App.go('store')">🛍 Shop</div>
+    <div class="nav-tab"        id="tab-wishlist" onclick="App.go('wishlist')">♡ Wishlist</div>
+    <div class="nav-tab" id="tab-admin" onclick="App.go('admin')">⚡ Admin BI <span class="admin-lock-indicator" id="admin-lock-indicator">🔒</span></div>
+    <div class="nav-tab"        id="tab-team"     onclick="App.go('team')">✦ Team</div>
+    <div class="nav-tab"        id="tab-auth"     onclick="App.go('auth')">👤 Account</div>
+  </div>
+
+  <div class="nav-right">
+    <div class="nav-search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="nav-search-input" placeholder="Search brands, products…" id="search-input" oninput="App.search(this.value)" onfocus="App.search(this.value)" autocomplete="off">
+    </div>
+    <div class="notif-btn" onclick="App.toggleNotif()" title="Notifications">
+      🔔<span class="notif-badge" id="notif-count">5</span>
+    </div>
+    <button class="btn-cart" onclick="App.go('cart')">
+      🛒 Cart <span class="cart-badge" id="cart-count">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════ SEARCH OVERLAY -->
+<div class="search-overlay" id="search-overlay" onclick="if(event.target===this)UI.closeSearch()">
+  <div class="search-results-grid" id="search-results-grid"></div>
+</div>
+
+<!-- ════════════════════════════════════════ TOAST -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ════════════════════════════════════════ NOTIFICATIONS PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <div class="notif-panel-title">Notifications <span class="notif-new-count" id="notif-new-label">5 new</span></div>
+    <div class="notif-close-btn" onclick="App.toggleNotif()">✕</div>
+  </div>
+  <div class="notif-tab-bar">
+    <div class="notif-tab-item active" onclick="App.notifFilter('all',this)">All</div>
+    <div class="notif-tab-item"        onclick="App.notifFilter('info',this)">Orders</div>
+    <div class="notif-tab-item"        onclick="App.notifFilter('promo',this)">Promos</div>
+    <div class="notif-tab-item"        onclick="App.notifFilter('alert',this)">Alerts</div>
+  </div>
+  <div class="notif-list" id="notif-items"></div>
+  <div class="notif-footer">
+    <button class="btn-mark-all" onclick="Store.markAllRead(); UI.renderNotifications(); UI.toast('All marked as read','info','✓')">Mark All as Read</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     PAGE: STORE
+════════════════════════════════════════════════════ -->
+<div class="page active page-fade" id="page-store">
+
+  <!-- PROMO BANNER -->
+  <div class="promo-banner" id="promo-banner">
+    <span>🎉 Limited time — use code</span>
+    <span class="promo-code">NOVA20</span>
+    <span>for 20% off your first order</span>
+    <button class="promo-dismiss" onclick="this.parentElement.remove()">✕</button>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="hero-eyebrow">✦ AI-Powered Commerce Intelligence</div>
+      <h1 class="hero-title">The Smarter<br>Way to <span class="hl">Shop.</span></h1>
+      <p class="hero-desc">Real products. Real brands. Powered by predictive AI — personalized recommendations, live inventory, and seamless checkout.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="document.getElementById('products-anchor').scrollIntoView({behavior:'smooth'})">Explore Products →</button>
+        <button class="btn-secondary" onclick="App.go('admin')">View BI Dashboard</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <!-- Main product card -->
+      <div class="h-card h-card-main">
+        <div class="h-card-tag">🔥 Featured</div>
+        <div class="h-main-img" style="background:linear-gradient(135deg,#1a1a1a,#2d2d2d)"><img src="assets/products/p1-sony-headphones.svg" alt="Sony WH-1000XM5" class="h-main-photo"></div>
+        <div class="h-main-name">Sony WH-1000XM5</div>
+        <div class="h-main-sub">Over-Ear Headphones</div>
+        <div class="h-main-stars">★★★★★ <span style="color:var(--text3);font-size:11px">(12,847)</span></div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
+          <span class="h-main-price">$279</span>
+          <span class="h-main-old">$349</span>
+          <span style="padding:2px 8px;background:var(--rose-dim);color:var(--rose);font-size:10px;font-weight:700;border-radius:4px">−20%</span>
+        </div>
+      </div>
+      <!-- Live stat card -->
+      <div class="h-card h-card-stat">
+        <div class="h-card-tag">Live Sales</div>
+        <div class="h-stat-num" id="hero-live-count">1,247</div>
+        <div class="h-stat-label">Orders today</div>
+        <div class="h-stat-up">▲ 18.4% vs yesterday</div>
+      </div>
+      <!-- AI rec card -->
+      <div class="h-card h-card-rec">
+        <div class="h-card-tag">🤖 AI Pick For You</div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <span style="font-size:28px">⌚</span>
+          <div>
+            <div style="font-size:13px;font-weight:700">Apple Watch Series 10</div>
+            <div style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--violet)">$399</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="category-strip" id="products-anchor">
+    <div class="section-eyebrow">Browse Categories</div>
+    <div class="cat-pills">
+      <div class="cat-pill active" onclick="App.setCategory('all',this)">All Products</div>
+      <div class="cat-pill" onclick="App.setCategory('Audio',this)">🎧 Audio</div>
+      <div class="cat-pill" onclick="App.setCategory('Wearables',this)">⌚ Wearables</div>
+      <div class="cat-pill" onclick="App.setCategory('Electronics',this)">📱 Electronics</div>
+      <div class="cat-pill" onclick="App.setCategory('Computing',this)">💻 Computing</div>
+      <div class="cat-pill" onclick="App.setCategory('Gaming',this)">🎮 Gaming</div>
+      <div class="cat-pill" onclick="App.setCategory('Photography',this)">📷 Photography</div>
+    </div>
+  </section>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <select class="filter-select" onchange="Store.set('sortBy',this.value); UI.renderProducts()">
+      <option value="featured">Featured</option>
+      <option value="bestseller">Best Sellers</option>
+      <option value="price-asc">Price: Low → High</option>
+      <option value="price-desc">Price: High → Low</option>
+      <option value="rating">Top Rated</option>
+      <option value="newest">Newest</option>
+    </select>
+    <select class="filter-select" onchange="App.filterPrice(this.value)">
+      <option value="0-9999">All Prices</option>
+      <option value="0-100">Under $100</option>
+      <option value="100-300">$100 – $300</option>
+      <option value="300-600">$300 – $600</option>
+      <option value="600-9999">$600+</option>
+    </select>
+    <span class="filter-count"><span id="products-count">18</span> products</span>
+  </div>
+
+  <!-- PRODUCTS GRID -->
+  <div class="products-wrap">
+    <div class="products-grid" id="products-grid"></div>
+  </div>
+
+  <!-- AI RECS -->
+  <section class="ai-strip">
+    <div class="ai-strip-inner">
+      <div class="ai-strip-header">
+        <span class="ai-pill">🤖 AI Engine</span>
+        <span class="ai-strip-title">Recommended For You</span>
+        <span class="ai-strip-sub">Based on browsing & purchase history</span>
+      </div>
+      <div class="ai-scroll" id="ai-recs"></div>
+    </div>
+  </section>
+
+  <!-- STATS ROW -->
+  <div class="stats-row">
+    <div class="stats-inner">
+      <div class="stat-cell">
+        <div class="stat-num" data-count="84320" data-prefix="$">$0</div>
+        <div class="stat-label">Revenue This Month</div>
+        <div class="stat-sub">▲ 22.4% vs last month</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" data-count="1847">0</div>
+        <div class="stat-label">Orders Fulfilled</div>
+        <div class="stat-sub">▲ 14.7% growth</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" data-count="98.4" data-suffix="%">0%</div>
+        <div class="stat-label">Customer Satisfaction</div>
+        <div class="stat-sub">Based on 65,000+ reviews</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" data-count="1247">0</div>
+        <div class="stat-label">Active Customers</div>
+        <div class="stat-sub">▲ 8.2% new signups</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">
+          <div class="footer-logo-mark">🏠</div>
+          Nova<span class="ns">Store</span>
+        </div>
+        <div class="footer-desc">Intelligent e-commerce powered by machine learning. Smarter recommendations, real-time analytics, and predictive inventory — all in one platform.</div>
+        <div class="footer-socials">
+          <div class="social-btn" onclick="UI.toast('Twitter/X','info','🐦')">𝕏</div>
+          <div class="social-btn" onclick="UI.toast('Instagram','info','📸')">IG</div>
+          <div class="social-btn" onclick="UI.toast('LinkedIn','info','💼')">in</div>
+          <div class="social-btn" onclick="UI.toast('GitHub','info','🐙')">GH</div>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Shop</div>
+        <div class="footer-link" onclick="App.setCategory('Audio', document.querySelector('.cat-pill'))">Audio</div>
+        <div class="footer-link" onclick="App.setCategory('Wearables', document.querySelector('.cat-pill'))">Wearables</div>
+        <div class="footer-link" onclick="App.setCategory('Electronics', document.querySelector('.cat-pill'))">Electronics</div>
+        <div class="footer-link" onclick="App.setCategory('Gaming', document.querySelector('.cat-pill'))">Gaming</div>
+        <div class="footer-link" onclick="App.go('wishlist')">Wishlist</div>
+        <div class="footer-link" onclick="App.go('cart')">Cart</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Account</div>
+        <div class="footer-link" onclick="App.go('auth')">Sign In</div>
+        <div class="footer-link" onclick="App.go('auth')">Register</div>
+        <div class="footer-link" onclick="App.goToOrders()">My Orders</div>
+        <div class="footer-link" onclick="UI.toast('Profile settings','info','⚙️')">Settings</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <div class="footer-link" onclick="App.go('admin')">Admin BI</div>
+        <div class="footer-link" onclick="App.go('team')">Project Team</div>
+        <div class="footer-link" onclick="UI.toast('API docs','info','📚')">API Docs</div>
+        <div class="footer-link" onclick="UI.toast('About NovaStore','info','ℹ️')">About</div>
+        <div class="footer-link" onclick="UI.toast('Support center','info','🆘')">Support</div>
+        <div class="footer-link" onclick="UI.toast('Privacy policy','info','🔒')">Privacy</div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 NovaStore · Vue 3 · Node.js · PostgreSQL · Python · Scikit-Learn</span>
+      <div class="footer-tech-badges">
+        <span class="tech-badge">🔒 SSL Secured</span>
+        <span class="tech-badge">⚡ AI Powered</span>
+        <span class="tech-badge">🐍 Scikit-Learn</span>
+        <span class="tech-badge">🚀 Vue 3</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     PAGE: CART
+════════════════════════════════════════════════════ -->
+<div class="page page-fade" id="page-cart">
+  <div class="cart-page-wrap">
+    <div class="page-title">Shopping Cart</div>
+    <div class="page-subtitle" id="cart-item-count">0 items</div>
+
+    <div class="cart-empty-state hidden" id="cart-empty">
+      <div style="font-size:60px;margin-bottom:16px;opacity:0.35">🛒</div>
+      <div style="font-size:20px;font-weight:700;margin-bottom:8px;color:var(--text2)">Your cart is empty</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:20px">Discover products and add them to your cart</div>
+      <button class="btn-primary" onclick="App.go('store')">← Back to Shop</button>
+    </div>
+
+    <div class="cart-layout" id="cart-layout">
+      <div class="cart-list-card" id="cart-items-list"></div>
+      <div class="cart-summary-card">
+        <div class="summary-title">Order Summary</div>
+        <div class="summary-row"><span>Subtotal</span><span class="sval" id="summary-subtotal">$0.00</span></div>
+        <div class="summary-row"><span>Shipping</span><span class="sval-free">FREE</span></div>
+        <div class="summary-row"><span>Tax (8%)</span><span class="sval" id="summary-tax">$0.00</span></div>
+        <div class="summary-row total"><span>Total</span><span class="sval" id="summary-total">$0.00</span></div>
+        <button class="btn-checkout-main" onclick="Modal.openCheckout()">Secure Checkout →</button>
+        <div class="promo-row">
+          <input class="promo-input" placeholder="Promo code…" id="promo-code-input">
+          <button class="btn-promo" onclick="App.applyPromo()">Apply</button>
+        </div>
+        <div class="secure-badge">🔒 SSL Secured · Visa · Mastercard · PayPal · Apple Pay</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     PAGE: WISHLIST
+════════════════════════════════════════════════════ -->
+<div class="page page-fade" id="page-wishlist">
+  <div class="wishlist-wrap">
+    <div class="page-title">Wishlist ♡</div>
+    <div class="wishlist-grid" id="wishlist-grid"></div>
+    <div class="cart-empty-state hidden" id="wishlist-empty">
+      <div style="font-size:60px;margin-bottom:16px;opacity:0.35">♡</div>
+      <div style="font-size:20px;font-weight:700;margin-bottom:8px;color:var(--text2)">Your wishlist is empty</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:20px">Save products you love</div>
+      <button class="btn-primary" onclick="App.go('store')">← Discover Products</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     PAGE: ORDERS
+════════════════════════════════════════════════════ -->
+<!-- (Orders page moved under Admin BI → Customer Orders) -->
+
+<!-- ════════════════════════════════════════════════════
+     PAGE: AUTH
+════════════════════════════════════════════════════ -->
+<div class="page page-fade" id="page-auth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo-mark">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#000" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        </div>
+        Nova<span class="ns">Store</span>
+      </div>
+      <div class="auth-sub">Sign in to your account or create a new one</div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" onclick="App.authTab('login',this)">Sign In</div>
+        <div class="auth-tab"        onclick="App.authTab('register',this)">Register</div>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="auth-login">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="you@example.com" id="login-email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="••••••••" id="login-pass">
+        </div>
+        <div style="text-align:right;margin-bottom:14px"><span style="font-size:12px;color:var(--nova);cursor:pointer" onclick="UI.toast('Password reset email sent','success','📧')">Forgot password?</span></div>
+        <button class="btn-auth" onclick="App.login()">Sign In →</button>
+        <div class="auth-divider">or continue with</div>
+        <div class="auth-social">
+          <button class="btn-social" onclick="App.login()">G&nbsp; Google</button>
+          <button class="btn-social" onclick="App.login()">GitHub</button>
+        </div>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="auth-register" class="hidden">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="Minimum 8 characters">
+        </div>
+        <button class="btn-auth" onclick="App.register()">Create Account →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     PAGE: TEAM / CONTRIBUTORS
+════════════════════════════════════════════════════ -->
+<div class="page page-fade" id="page-team">
+  <div class="team-wrap">
+
+    <div class="team-hero">
+      <div class="hero-eyebrow">✦ Final Year Project</div>
+      <h1 class="team-title">Built by <span class="hl">Four</span>,<br>shipped as <span class="hl">One.</span></h1>
+      <p class="team-desc">NovaStore AI is a full-stack intelligent e-commerce platform designed, engineered, and shipped as a collaborative final year project — combining Vue 3, Node.js, PostgreSQL, and a Python/Scikit-Learn analytics engine.</p>
+    </div>
+
+    <div class="section-eyebrow">Project Team</div>
+    <div class="team-grid" id="team-grid"></div>
+
+    <div class="team-meta-band">
+      <div class="team-meta-cell">
+        <div class="team-meta-label">Project</div>
+        <div class="team-meta-value">NovaStore AI</div>
+      </div>
+      <div class="team-meta-cell">
+        <div class="team-meta-label">Team Size</div>
+        <div class="team-meta-value">4 Contributors</div>
+      </div>
+      <div class="team-meta-cell">
+        <div class="team-meta-label">Stack</div>
+        <div class="team-meta-value">Vue · Node · PostgreSQL · Python</div>
+      </div>
+      <div class="team-meta-cell">
+        <div class="team-meta-label">Category</div>
+        <div class="team-meta-value">Intelligent E-Commerce + BI</div>
+      </div>
+    </div>
+
+    <div class="team-footnote">
+      Every contributor listed above worked across the full stack — from the AI-powered BI dashboard and predictive forecasting engine to the storefront, cart, checkout, and admin tooling that make up NovaStore AI.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     PAGE: ADMIN BI DASHBOARD (gated)
+════════════════════════════════════════════════════ -->
+<div class="page page-fade" id="page-admin">
+
+  <!-- ── ADMIN LOGIN GATE ── -->
+  <div class="admin-gate" id="admin-gate">
+    <div class="admin-gate-ambient">
+      <div class="gate-blob gate-blob1"></div>
+      <div class="gate-blob gate-blob2"></div>
+    </div>
+    <div class="admin-gate-card">
+      <div class="admin-gate-logo">
+        <div class="admin-gate-logo-mark">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#000" stroke-width="2.5"><path d="M12 1l9 4v6c0 5.5-3.8 9.7-9 11-5.2-1.3-9-5.5-9-11V5z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <div>
+          <div class="admin-gate-title">Nova<span class="ns">Store</span></div>
+          <div class="admin-gate-sub">Business Intelligence</div>
+        </div>
+      </div>
+
+      <div class="admin-gate-divider"></div>
+
+      <div class="admin-gate-heading">Admin Access</div>
+      <div class="admin-gate-desc">Sign in to view real-time analytics, manage inventory, and access predictive forecasting.</div>
+
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" id="admin-user-input" placeholder="admin" autocomplete="username" value="admin">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="pass-input-wrap">
+          <input class="form-input" type="password" id="admin-pass-input" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')App.adminLogin()">
+          <button class="pass-toggle" type="button" onclick="App.togglePassVisibility()" id="pass-toggle-btn" title="Show password">👁</button>
+        </div>
+      </div>
+
+      <div class="admin-gate-error hidden" id="admin-gate-error">
+        <span>⚠</span> Incorrect username or password
+      </div>
+
+      <button class="btn-auth admin-gate-submit" id="admin-login-btn" onclick="App.adminLogin()">
+        <span id="admin-login-btn-text">Sign In to Dashboard →</span>
+      </button>
+
+      <div class="admin-gate-hint">
+        <span>🔑</span> Demo credentials: <code>admin</code> / <code>novastore2025</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADMIN DASHBOARD (revealed after auth) ── -->
+  <div class="admin-layout hidden" id="admin-dashboard-content">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-section">Overview</div>
+      <div class="sidebar-item active" onclick="Admin.goSub('overview',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="sidebar-item" onclick="Admin.goSub('analytics',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analytics
+      </div>
+
+      <div class="sidebar-section">Commerce</div>
+      <div class="sidebar-item" onclick="Admin.goSub('products-mgmt',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Products
+      </div>
+      <div class="sidebar-item" onclick="Admin.goSub('orders-mgmt',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Order Management
+      </div>
+      <div class="sidebar-item" onclick="Admin.goSub('customer-orders',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+        Customer Orders
+      </div>
+      <div class="sidebar-item" onclick="Admin.goSub('inventory',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        Inventory
+      </div>
+      <div class="sidebar-item" onclick="Admin.goSub('customers',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Customers
+      </div>
+
+      <div class="sidebar-section">Intelligence</div>
+      <div class="sidebar-item" onclick="Admin.goSub('forecasting',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        Forecasting
+      </div>
+      <div class="sidebar-item" onclick="Admin.goSub('reports',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Reports
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-admin-id">
+          <div class="sidebar-admin-avatar">A</div>
+          <div>
+            <div class="sidebar-admin-name">Admin</div>
+            <div class="sidebar-admin-role">Store Owner</div>
+          </div>
+        </div>
+        <button class="sidebar-logout-btn" onclick="App.adminLogout()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- ADMIN MAIN -->
+    <div class="admin-main">
+
+      <!-- ─── OVERVIEW ─── -->
+      <div class="admin-sub active" id="sub-overview">
+        <div class="admin-header">
+          <div>
+            <div class="admin-eyebrow">Admin · Business Intelligence</div>
+            <div class="admin-title-row">
+              <h2 class="admin-page-title">Executive Dashboard</h2>
+              <div class="live-dot"></div>
+              <span class="live-label">Live</span>
+            </div>
+          </div>
+          <div class="admin-actions">
+            <button class="btn-admin" onclick="UI.toast('Data refreshed','info','🔄')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+              Refresh
+            </button>
+            <button class="btn-admin btn-admin-primary" onclick="UI.toast('Generating PDF report…','success','📄')">Export PDF</button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:var(--nova-dim)">💰</div>
+            <div class="kpi-label">Total Revenue</div>
+            <div class="kpi-value text-nova" id="kpi-revenue">$84,320</div>
+            <div class="kpi-change kpi-up">▲ 22.4% vs last month</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:var(--cyan-dim)">📦</div>
+            <div class="kpi-label">Total Orders</div>
+            <div class="kpi-value text-cyan" id="kpi-orders">1,847</div>
+            <div class="kpi-change kpi-up">▲ 14.7%</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:var(--violet-dim)">👥</div>
+            <div class="kpi-label">New Customers</div>
+            <div class="kpi-value text-violet">342</div>
+            <div class="kpi-change kpi-up">▲ 8.2%</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:var(--amber-dim)">🎯</div>
+            <div class="kpi-label">Conversion Rate</div>
+            <div class="kpi-value text-amber">4.8%</div>
+            <div class="kpi-change kpi-down">▼ 0.3%</div>
+          </div>
+        </div>
+
+        <!-- Revenue chart -->
+        <div class="charts-row">
+          <div class="chart-card chart-card-wide">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Revenue Overview</div>
+                <div class="chart-sub">Actual vs AI-Predicted sales</div>
+              </div>
+              <div class="chart-tabs">
+                <div class="chart-tab active" onclick="App.revPeriod('7d',this)">7D</div>
+                <div class="chart-tab"        onclick="App.revPeriod('30d',this)">30D</div>
+                <div class="chart-tab"        onclick="App.revPeriod('90d',this)">90D</div>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap"><canvas id="chart-revenue"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Segments + Top Products -->
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Customer Segments</div>
+                <div class="chart-sub">Auto-classified by spend</div>
+              </div>
+            </div>
+            <div class="seg-layout">
+              <div class="seg-donut-wrap">
+                <canvas id="chart-segments"></canvas>
+                <div class="seg-center">
+                  <div class="seg-center-num">1,247</div>
+                  <div class="seg-center-sub">customers</div>
+                </div>
+              </div>
+              <div class="seg-legend">
+                <div class="seg-row"><div class="seg-dot" style="background:var(--nova)"></div><span class="seg-name">High Value</span><span class="seg-val text-nova">284</span><span class="seg-pct">23%</span></div>
+                <div class="seg-row"><div class="seg-dot" style="background:var(--cyan)"></div><span class="seg-name">Mid Value</span><span class="seg-val text-cyan">598</span><span class="seg-pct">48%</span></div>
+                <div class="seg-row"><div class="seg-dot" style="background:var(--text4)"></div><span class="seg-name">Low Value</span><span class="seg-val">365</span><span class="seg-pct">29%</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Top Products</div>
+                <div class="chart-sub">Units sold this month</div>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap"><canvas id="chart-top-products"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="alerts-row">
+          <div class="alert-list">
+            <div class="alert-head">🚨 Inventory Alerts <span class="alert-badge-count">3 critical</span></div>
+            <div class="alert-item alert-crit"><div class="alert-icon">⚠</div><div><div class="alert-text">PS5 Slim — 7 units left</div><div class="alert-sub">Predicted stockout in 3 days · Reorder 50 units</div></div></div>
+            <div class="alert-item alert-crit"><div class="alert-icon">⚠</div><div><div class="alert-text">Anker 575 Hub — 8 units left</div><div class="alert-sub">Predicted stockout in 6 days · Reorder 30 units</div></div></div>
+            <div class="alert-item alert-warn"><div class="alert-icon">⚡</div><div><div class="alert-text">Sony A7C II — 11 units left</div><div class="alert-sub">Predicted stockout in 6 days</div></div></div>
+            <div class="alert-item alert-ok"><div class="alert-icon">✓</div><div><div class="alert-text">MacBook Air M3 — 38 units</div><div class="alert-sub">Stock healthy · ~60 days remaining</div></div></div>
+          </div>
+          <div class="alert-list">
+            <div class="alert-head">📋 Recent Orders</div>
+            <div class="alert-item"><div class="alert-icon" style="background:var(--emerald-dim);color:var(--emerald)">✓</div><div style="flex:1"><div class="alert-text">#ORD-9841 · Emily Chen</div><div class="alert-sub">2 items · $338.00</div></div><span class="status-badge status-delivered">Delivered</span></div>
+            <div class="alert-item"><div class="alert-icon" style="background:var(--cyan-dim);color:var(--cyan)">→</div><div style="flex:1"><div class="alert-text">#ORD-9840 · Marcus Webb</div><div class="alert-sub">1 item · $1,299.00</div></div><span class="status-badge status-shipped">Shipped</span></div>
+            <div class="alert-item"><div class="alert-icon" style="background:var(--amber-dim);color:var(--amber)">⟳</div><div style="flex:1"><div class="alert-text">#ORD-9839 · Sofia Rossi</div><div class="alert-sub">3 items · $847.00</div></div><span class="status-badge status-processing">Processing</span></div>
+            <div class="alert-item"><div class="alert-icon" style="background:var(--border);color:var(--text3)">◎</div><div style="flex:1"><div class="alert-text">#ORD-9838 · Jake Thompson</div><div class="alert-sub">1 item · $449.00</div></div><span class="status-badge status-pending">Pending</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── ANALYTICS ─── -->
+      <div class="admin-sub" id="sub-analytics">
+        <div class="admin-header">
+          <div><div class="admin-eyebrow">Intelligence Layer</div><h2 class="admin-page-title">Customer Analytics</h2></div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card chart-card-wide">
+            <div class="chart-header"><div><div class="chart-title">Conversion Funnel</div><div class="chart-sub">Sessions → Purchase (4.8% CVR)</div></div></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-funnel"></canvas></div>
+          </div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-header"><div class="chart-title">Traffic Sources</div></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-traffic"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><div><div class="chart-title">Avg Order Value Trend</div><div class="chart-sub">Jan–Jun 2025</div></div></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-aov"></canvas></div>
+          </div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card chart-card-wide">
+            <div class="chart-header"><div><div class="chart-title">Revenue by Category</div><div class="chart-sub">% of total GMV</div></div></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-cat-revenue"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── FORECASTING ─── -->
+      <div class="admin-sub" id="sub-forecasting">
+        <div class="admin-header">
+          <div><div class="admin-eyebrow">AI · Scikit-Learn Model</div><h2 class="admin-page-title">Predictive Forecasting</h2></div>
+          <div class="admin-actions">
+            <button class="btn-admin btn-admin-primary" onclick="UI.toast('Running ML forecast model…','info','🤖')">▶ Run Model</button>
+          </div>
+        </div>
+        <div class="forecast-grid">
+          <div class="forecast-card">
+            <div class="fc-label">Next Day Forecast</div>
+            <div class="fc-value text-nova">$3,840</div>
+            <div class="fc-sub">Predicted revenue</div>
+            <div class="fc-bar"><div class="fc-fill" style="width:76%;background:var(--nova)"></div></div>
+            <div class="fc-conf">76% confidence · ▲12% vs actual avg</div>
+          </div>
+          <div class="forecast-card">
+            <div class="fc-label">Next Week Forecast</div>
+            <div class="fc-value text-cyan">$26,100</div>
+            <div class="fc-sub">Predicted revenue</div>
+            <div class="fc-bar"><div class="fc-fill" style="width:82%;background:var(--cyan)"></div></div>
+            <div class="fc-conf">82% confidence · ▲9% trend</div>
+          </div>
+          <div class="forecast-card">
+            <div class="fc-label">Next Month Forecast</div>
+            <div class="fc-value text-violet">$98,400</div>
+            <div class="fc-sub">Predicted revenue</div>
+            <div class="fc-bar"><div class="fc-fill" style="width:69%;background:var(--violet)"></div></div>
+            <div class="fc-conf">69% confidence · seasonal model</div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div><div class="chart-title">Revenue Forecast vs Actual</div><div class="chart-sub">90-day view with ML prediction band</div></div>
+          </div>
+          <div class="chart-canvas-tall"><canvas id="chart-forecast"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ─── INVENTORY ─── -->
+      <div class="admin-sub" id="sub-inventory">
+        <div class="admin-header">
+          <div><div class="admin-eyebrow">Stock Management</div><h2 class="admin-page-title">Inventory Intelligence</h2></div>
+          <div class="admin-actions">
+            <button class="btn-admin" onclick="UI.toast('Inventory exported to Excel','success','📊')">Export Excel</button>
+            <button class="btn-admin btn-admin-primary" onclick="Modal.openAdminProduct(null)">+ Add Product</button>
+          </div>
+        </div>
+        <div class="chart-card" style="margin-bottom:18px">
+          <div class="chart-header"><div><div class="chart-title">Days Until Stockout by Product</div><div class="chart-sub">AI prediction based on sales velocity</div></div></div>
+          <div style="height:240px;position:relative"><canvas id="chart-inventory"></canvas></div>
+        </div>
+        <div class="table-card">
+          <div class="table-head">
+            <div class="table-head-title">All Products — Stock Levels</div>
+            <div class="table-head-sub">AI reorder predictions active</div>
+          </div>
+          <table class="data-table">
+            <thead><tr>
+              <th>Product</th><th>Category</th><th>Stock</th><th>Sold</th><th>Days Left (AI)</th><th>Status</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="inventory-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ─── CUSTOMERS ─── -->
+      <div class="admin-sub" id="sub-customers">
+        <div class="admin-header">
+          <div><div class="admin-eyebrow">CRM · Segmentation Engine</div><h2 class="admin-page-title">Customer Intelligence</h2></div>
+          <div class="admin-actions">
+            <button class="btn-admin" onclick="UI.toast('Customer export ready','success','📧')">Export CSV</button>
+          </div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-icon" style="background:var(--nova-dim)">💎</div><div class="kpi-label">High Value</div><div class="kpi-value text-nova">284</div><div style="font-size:12px;color:var(--text3);margin-top:4px">Spent &gt;$1,000 · LTV avg $3,200</div></div>
+          <div class="kpi-card"><div class="kpi-icon" style="background:var(--cyan-dim)">🥈</div><div class="kpi-label">Mid Value</div><div class="kpi-value text-cyan">598</div><div style="font-size:12px;color:var(--text3);margin-top:4px">Spent $300–$1,000</div></div>
+          <div class="kpi-card"><div class="kpi-icon" style="background:var(--bg4)">👥</div><div class="kpi-label">Low Value</div><div class="kpi-value" style="color:var(--text2)">365</div><div style="font-size:12px;color:var(--text3);margin-top:4px">Spent &lt;$300</div></div>
+          <div class="kpi-card"><div class="kpi-icon" style="background:var(--amber-dim)">⚠</div><div class="kpi-label">At-Risk</div><div class="kpi-value text-amber">47</div><div style="font-size:12px;color:var(--text3);margin-top:4px">No purchase 60+ days</div></div>
+        </div>
+        <div class="table-card">
+          <div class="table-head"><div class="table-head-title">Customer List</div></div>
+          <table class="data-table">
+            <thead><tr><th>Customer</th><th>Segment</th><th>Total Spent</th><th>Orders</th><th>Joined</th><th>Last Order</th><th>Actions</th></tr></thead>
+            <tbody id="customers-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ─── PRODUCTS MGMT ─── -->
+      <div class="admin-sub" id="sub-products-mgmt">
+        <div class="admin-header">
+          <div><div class="admin-eyebrow">Product Management</div><h2 class="admin-page-title">All Products</h2></div>
+          <div class="admin-actions">
+            <button class="btn-admin btn-admin-primary" onclick="Modal.openAdminProduct(null)">+ Add Product</button>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-head"><div class="table-head-title">Products</div><div class="table-head-sub" id="products-mgmt-count"></div></div>
+          <table class="data-table">
+            <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Sold</th><th>Rating</th><th>Badge</th><th>Actions</th></tr></thead>
+            <tbody id="products-mgmt-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ─── ORDERS MGMT ─── -->
+      <div class="admin-sub" id="sub-orders-mgmt">
+        <div class="admin-header">
+          <div><div class="admin-eyebrow">Order Management</div><h2 class="admin-page-title">All Orders</h2></div>
+          <div class="admin-actions">
+            <button class="btn-admin" onclick="UI.toast('Orders exported','success','📦')">Export</button>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-head"><div class="table-head-title">Orders</div><div class="table-head-sub">Click status to update</div></div>
+          <table class="data-table">
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="orders-mgmt-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ─── CUSTOMER ORDERS (tracking view) ─── -->
+      <div class="admin-sub" id="sub-customer-orders">
+        <div class="admin-header">
+          <div><div class="admin-eyebrow">Storefront View</div><h2 class="admin-page-title">Customer Orders</h2></div>
+          <div class="admin-actions">
+            <button class="btn-admin" onclick="UI.toast('Tracking sync refreshed','info','🔄')">Refresh Tracking</button>
+          </div>
+        </div>
+        <div class="orders-wrap" style="max-width:100%;padding:0">
+          <div id="orders-list"></div>
+        </div>
+      </div>
+
+      <!-- ─── REPORTS ─── -->
+      <div class="admin-sub" id="sub-reports">
+        <div class="admin-header">
+          <div><div class="admin-eyebrow">Report Generation</div><h2 class="admin-page-title">Reports</h2></div>
+        </div>
+        <div class="reports-grid">
+          <div class="report-card" onclick="UI.toast('Generating Sales Report…','success','📊')">
+            <div class="report-label">📊 Sales Report</div>
+            <div class="report-title">Revenue, Orders &amp; AOV</div>
+            <div class="report-desc">Complete sales analysis with trend lines, period-over-period comparison, and AI revenue forecasts.</div>
+            <div class="report-badges"><span class="report-badge rb-pdf">PDF</span><span class="report-badge rb-xlsx">Excel</span></div>
+          </div>
+          <div class="report-card" onclick="UI.toast('Generating Inventory Report…','success','📦')">
+            <div class="report-label">📦 Inventory Report</div>
+            <div class="report-title">Stock, Reorders &amp; Forecasts</div>
+            <div class="report-desc">AI-powered depletion predictions per SKU with reorder recommendations and supplier lead times.</div>
+            <div class="report-badges"><span class="report-badge rb-pdf">PDF</span><span class="report-badge rb-xlsx">Excel</span></div>
+          </div>
+          <div class="report-card" onclick="UI.toast('Generating Customer Report…','success','👥')">
+            <div class="report-label">👥 Customer Report</div>
+            <div class="report-title">Segments, LTV &amp; Churn</div>
+            <div class="report-desc">Customer segmentation breakdown, lifetime value analysis, churn risk scoring, and behavioral insights.</div>
+            <div class="report-badges"><span class="report-badge rb-pdf">PDF</span><span class="report-badge rb-xlsx">Excel</span></div>
+          </div>
+          <div class="report-card" onclick="UI.toast('Generating Forecast Report…','success','🤖')">
+            <div class="report-label">🤖 AI Forecast Report</div>
+            <div class="report-title">Revenue &amp; Inventory AI</div>
+            <div class="report-desc">Scikit-Learn model accuracy metrics, confidence intervals, and 90-day revenue + inventory predictions.</div>
+            <div class="report-badges"><span class="report-badge rb-pdf">PDF</span><span class="report-badge rb-xlsx">Excel</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /admin-main -->
+  </div><!-- /admin-layout -->
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     PRODUCT DETAIL MODAL
+════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-product" onclick="if(event.target===this)Modal.close('modal-product')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="Modal.close('modal-product')">✕</button>
+    <div class="mp-layout">
+      <!-- Image side -->
+      <div class="mp-img-side">
+        <div class="mp-main-img" id="mp-img"><div id="mp-emoji"></div></div>
+        <div class="mp-thumbs">
+          <div class="mp-thumb active" id="mp-thumb-0"></div>
+          <div class="mp-thumb" id="mp-thumb-1">✨</div>
+          <div class="mp-thumb" id="mp-thumb-2">🎁</div>
+        </div>
+        <div class="mp-trust">🔒 Secure Checkout<br>📦 Free Shipping Over $50<br>↩ 30-Day Free Returns</div>
+      </div>
+      <!-- Info side -->
+      <div class="mp-info-side">
+        <div class="mp-badge-row">
+          <span id="mp-badge"></span>
+          <span class="mp-green-badge">✓ In Stock</span>
+          <span class="mp-cyan-badge">Free Shipping</span>
+        </div>
+        <div class="mp-brand" id="mp-brand"></div>
+        <div class="mp-name"  id="mp-name"></div>
+        <div class="mp-sub"   id="mp-sub"></div>
+        <div class="mp-rating-row">
+          <span class="mp-stars" id="mp-stars"></span>
+          <span class="mp-rating-num" id="mp-rating"></span>
+          <span class="mp-review-ct" id="mp-review-count"></span>
+        </div>
+        <div class="mp-price-row">
+          <span class="mp-price" id="mp-price"></span>
+          <span class="mp-old-price" id="mp-old-price"></span>
+          <span class="mp-discount" id="mp-discount"></span>
+        </div>
+        <div class="mp-desc" id="mp-desc"></div>
+
+        <!-- TABS: Features / Specs -->
+        <div class="mp-tabs">
+          <div class="mp-tab active" onclick="App.mpTab('features',this)">Features</div>
+          <div class="mp-tab"        onclick="App.mpTab('specs',this)">Specifications</div>
+        </div>
+        <div class="mp-tab-panel active" id="mp-panel-features">
+          <div class="mp-features" id="mp-features"></div>
+        </div>
+        <div class="mp-tab-panel" id="mp-panel-specs">
+          <div class="mp-specs-grid" id="mp-specs"></div>
+        </div>
+
+        <div class="mp-actions">
+          <button class="btn-mp-cart" id="mp-cart-btn">🛒 Add to Cart</button>
+          <button class="btn-mp-wish" id="mp-wish-btn">🤍</button>
+        </div>
+        <div class="mp-stock" id="mp-stock"></div>
+        <div class="mp-tags-row" id="mp-tags"></div>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="mp-reviews">
+      <div class="reviews-head">
+        <div class="reviews-title">Customer Reviews</div>
+        <div class="reviews-total" id="mp-reviews-total"></div>
+      </div>
+      <div class="review-summary">
+        <div class="review-big">
+          <div class="review-big-num" id="mp-big-rating"></div>
+          <div class="review-big-stars" id="mp-big-stars"></div>
+          <div class="review-big-total" id="mp-big-total"></div>
+        </div>
+        <div class="rdist" id="mp-rating-dist"></div>
+      </div>
+      <div class="review-list" id="mp-reviews-list"></div>
+      <div class="write-review">
+        <div class="wr-title">Write a Review</div>
+        <div class="star-sel-row" id="star-sel-row">
+          <span class="star-sel" data-n="1">★</span>
+          <span class="star-sel" data-n="2">★</span>
+          <span class="star-sel" data-n="3">★</span>
+          <span class="star-sel" data-n="4">★</span>
+          <span class="star-sel" data-n="5">★</span>
+        </div>
+        <textarea class="form-input" rows="3" id="review-textarea" placeholder="Share your experience with this product…"></textarea>
+        <button class="btn-submit-review" onclick="Modal.submitReview()">Submit Review</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     CHECKOUT MODAL
+════════════════════════════════════════════════════ -->
+<div class="modal-fullscreen" id="modal-checkout" onclick="if(event.target===this)Modal.closeCheckout()">
+  <div class="co-box">
+    <div class="co-header">
+      <div class="co-title">Checkout</div>
+      <span class="co-close" onclick="Modal.closeCheckout()">✕</span>
+    </div>
+    <div class="co-steps">
+      <div class="co-step active">1. Shipping</div>
+      <div class="co-step">2. Payment</div>
+      <div class="co-step">3. Review</div>
+      <div class="co-step">4. Done</div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="co-panel active" id="co-step-1">
+      <div class="co-section-title">Shipping Details</div>
+      <div class="form-row-2">
+        <div class="form-group"><label class="form-label">First Name</label><input class="form-input" placeholder="John"></div>
+        <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" placeholder="Doe"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="john@example.com"></div>
+      <div class="form-group"><label class="form-label">Address</label><input class="form-input" placeholder="123 Main Street"></div>
+      <div class="form-row-2">
+        <div class="form-group"><label class="form-label">City</label><input class="form-input" placeholder="London"></div>
+        <div class="form-group"><label class="form-label">Postcode</label><input class="form-input" placeholder="EC1A 1BB"></div>
+      </div>
+      <div style="margin-top:14px">
+        <div class="form-label" style="margin-bottom:10px">Shipping Method</div>
+        <label style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--nova-dim);border:1px solid rgba(232,245,66,0.28);border-radius:var(--r);cursor:pointer;margin-bottom:8px">
+          <input type="radio" name="ship" checked> <span style="flex:1;font-size:13px;font-weight:600">Standard (3–5 days)</span> <span style="font-family:var(--mono);color:var(--emerald);font-weight:700">FREE</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);cursor:pointer">
+          <input type="radio" name="ship"> <span style="flex:1;font-size:13px;font-weight:600">Express (1–2 days)</span> <span style="font-family:var(--mono);color:var(--nova);font-weight:700">$9.99</span>
+        </label>
+      </div>
+      <button class="btn-co-next" onclick="Modal.nextCheckoutStep()">Continue to Payment →</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="co-panel" id="co-step-2">
+      <div class="co-section-title">Payment Details</div>
+      <div class="payment-methods">
+        <div class="pm-btn active">💳 Card</div>
+        <div class="pm-btn" onclick="UI.toast('PayPal selected','info','🅿️');this.parentNode.querySelectorAll('.pm-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">🅿 PayPal</div>
+        <div class="pm-btn" onclick="UI.toast('Apple Pay selected','info','🍎');this.parentNode.querySelectorAll('.pm-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">🍎 Pay</div>
+      </div>
+      <div class="form-group"><label class="form-label">Cardholder Name</label><input class="form-input" placeholder="John Doe"></div>
+      <div class="form-group"><label class="form-label">Card Number</label><input class="form-input" placeholder="1234 5678 9012 3456" maxlength="19"></div>
+      <div class="card-row-3">
+        <div class="form-group"><label class="form-label">Expiry</label><input class="form-input" placeholder="MM/YY"></div>
+        <div class="form-group"><label class="form-label">CVV</label><input class="form-input" placeholder="123" maxlength="4"></div>
+        <div class="form-group"><label class="form-label">ZIP</label><input class="form-input" placeholder="10001"></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">🔒 Your payment info is encrypted with 256-bit TLS</div>
+      <button class="btn-co-next" onclick="Modal.nextCheckoutStep()">Review Order →</button>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="co-panel" id="co-step-3">
+      <div class="co-section-title">Review Your Order</div>
+      <div style="background:var(--bg3);border-radius:var(--r2);padding:14px;margin-bottom:14px" id="co-review-items"></div>
+      <div class="co-legal">By placing your order you agree to NovaStore's <a>Terms of Service</a> and <a>Privacy Policy</a>.</div>
+      <button class="btn-co-next green" onclick="Modal.nextCheckoutStep()">✓ Place Order</button>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="co-panel" id="co-step-4">
+      <div class="co-success">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">Order Confirmed!</div>
+        <div class="success-sub">Your order is being processed. You'll receive a confirmation email shortly.</div>
+        <div class="success-order-block">
+          <div class="success-label">Order ID</div>
+          <div class="success-id" id="co-success-id">#ORD-0000</div>
+          <div class="success-label" style="margin-top:10px">Tracking Number</div>
+          <div class="success-tracking" id="co-success-tracking"></div>
+        </div>
+        <div class="success-btns">
+          <button class="btn-primary" onclick="Modal.closeCheckout()">View Orders</button>
+          <button class="btn-secondary" onclick="Modal.close('modal-checkout'); App.go('store')">Continue Shopping</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     ADMIN PRODUCT MODAL
+════════════════════════════════════════════════════ -->
+<div class="admin-modal-overlay" id="modal-admin-product" onclick="if(event.target===this)Modal.close('modal-admin-product')">
+  <div class="admin-modal-box">
+    <div class="admin-modal-title">
+      <span id="admin-modal-title">Product</span>
+      <span class="admin-modal-close" onclick="Modal.close('modal-admin-product')">✕</span>
+    </div>
+    <div id="admin-product-form"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
